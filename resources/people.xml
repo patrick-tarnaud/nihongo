@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<people>
+    <person>
+        <lastname>smith</lastname>
+        <firstname>john</firstname>
+        <address>
+            <street>123_maple_street</street>
+            <postal_code>90210</postal_code>
+            <city>beverly_hills</city>
+            <country>usa</country>
+        </address>
+    </person>
+    <person>
+        <lastname>johnson</lastname>
+        <firstname>emily</firstname>
+        <address>
+            <street>456_oak_avenue</street>
+            <postal_code>10001</postal_code>
+            <city>new_york</city>
+            <country>usa</country>
+        </address>
+    </person>
+    <person>
+        <lastname>williams</lastname>
+        <firstname>michael</firstname>
+        <address>
+            <street>789_pine_road</street>
+            <postal_code>60614</postal_code>
+            <city>chicago</city>
+            <country>usa</country>
+        </address>
+    </person>
+</people>
