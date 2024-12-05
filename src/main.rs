@@ -2,6 +2,7 @@ use std::{env, fs::File, io::Read};
 use env_logger;
 
 use serde::Deserialize;
+mod jmdict;
 
 #[derive(Debug, Deserialize, PartialEq)]
 struct People {
@@ -34,13 +35,14 @@ fn load_persons_from_file(file_path: &str) -> Result<People, Box<dyn std::error:
 }
 
 fn main() {
-    let people_file_pb = env::current_dir().unwrap().join("resources/people.xml");
-    let people_file = people_file_pb.to_str().expect("Failed to convert current path to string.");
-    let r = match load_persons_from_file(people_file) {
-        Ok(people) => println!("{people:?}"),
-        Err(e) => {
-            eprintln!("Error loading XML: {}", e);
-            return;
-        }
-    };
+    
+    // let people_file_pb = env::current_dir().unwrap().join("resources/people.xml");
+    // let people_file = people_file_pb.to_str().expect("Failed to convert current path to string.");
+    // let r = match load_persons_from_file(people_file) {
+    //     Ok(people) => println!("{people:?}"),
+    //     Err(e) => {
+    //         eprintln!("Error loading XML: {}", e);
+    //         return;
+    //     }
+    // };
 }
