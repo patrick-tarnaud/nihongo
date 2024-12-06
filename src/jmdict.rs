@@ -6,7 +6,7 @@ const JMDICT: &str = "resources/jmdict.xml";
 #[derive(Debug, Deserialize, Serialize)]
 pub struct JMDict { 
     #[serde(rename = "entry")]
-    entries: Vec<Entry>,
+    pub entries: Vec<Entry>,
 } 
 
 // <!ELEMENT entry (ent_seq, k_ele*, r_ele+, sense+)>
@@ -22,52 +22,52 @@ pub struct Entry {
 // <!ELEMENT k_ele (keb, ke_inf*, ke_pri*)>
 #[derive(Debug, Deserialize, Serialize)]
 pub struct KEle {
-    keb: String,
+    pub keb: String,
     #[serde(default)]
-    ke_inf: Vec<String>,
+    pub ke_inf: Vec<String>,
     #[serde(default)]
-    ke_pri: Vec<String>,
+    pub ke_pri: Vec<String>,
 }
 
 // <!ELEMENT r_ele (reb, re_nokanji?, re_restr*, re_inf*, re_pri*)>
 #[derive(Debug, Deserialize, Serialize)]
 pub struct REle {
-    reb: String,
+    pub reb: String,
     #[serde(default)]
-    re_nokanji: String,
+    pub re_nokanji: String,
     #[serde(default)]
-    re_restr: Vec<String>,
+    pub re_restr: Vec<String>,
     #[serde(default)]
-    re_inf: Vec<String>,
+    pub re_inf: Vec<String>,
     #[serde(default)]
-    re_pri: Vec<String>,
+    pub re_pri: Vec<String>,
 }
 
 // <!ELEMENT sense (stagk*, stagr*, pos*, xref*, ant*, field*, misc*, s_inf*, lsource*, dial*, gloss*, example*)>
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Sense {
     #[serde(default)]
-    stagk: Vec<String>,
+    pub stagk: Vec<String>,
     #[serde(default)]
-    stagr: Vec<String>,
+    pub stagr: Vec<String>,
     #[serde(default)]
-    pos: Vec<String>,
+    pub pos: Vec<String>,
     #[serde(default)]
-    xref: Vec<String>,
+    pub xref: Vec<String>,
     #[serde(default)]
-    ant: Vec<String>,
+    pub ant: Vec<String>,
     #[serde(default)]
-    field: Vec<String>,
+    pub field: Vec<String>,
     #[serde(default)]
-    misc: Vec<String>,
+    pub misc: Vec<String>,
     #[serde(default)]
-    s_inf: Vec<String>,
+    pub s_inf: Vec<String>,
     #[serde(default)]
-    lsource: Vec<LSource>,
+    pub lsource: Vec<LSource>,
     #[serde(default)]
-    dial: Vec<String>,
+    pub dial: Vec<String>,
     #[serde(default)]
-    gloss: Vec<Gloss>,
+    pub gloss: Vec<Gloss>,
 }
 
 // <!ELEMENT lsource (#PCDATA)>
@@ -77,16 +77,13 @@ pub struct Sense {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct LSource {
     #[serde(rename = "$value", default)]
-    lsource: String,
-    // #[serde(rename = "$attr:lang", default)]
+    pub lsource: String,
     #[serde(default)]   
-    lang: String,
-    // #[serde(rename = "$attr:ls_type", default)]
+    pub lang: String,
     #[serde(default)]
-    ls_type: String,
-    // #[serde(rename = "$attr:ls_wasei", default)]
+    pub ls_type: String,
     #[serde(default)]
-    ls_wasei: char,  
+    pub ls_wasei: char,  
 }
 
 
@@ -98,13 +95,13 @@ pub struct LSource {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Gloss {
     #[serde(rename = "$value", default)]
-    gloss: String,
+    pub gloss: String,
     #[serde(default)]
-    lang: String,
+    pub lang: String,
     #[serde(default)]
-    g_gend: String,    
+    pub g_gend: String,    
     #[serde(default)]
-    g_type: String,
+    pub g_type: String,
 }
 
 #[derive(Debug)]
@@ -127,30 +124,391 @@ impl From<serde_xml_rs::Error> for JMDictError {
 }
 
 pub fn read_jmdict(jmdict: &str) -> Result<JMDict, JMDictError > { 
-    let mut content = String::new();  
     let content = std::fs::read_to_string(jmdict)?;
     let jmdict: JMDict = serde_xml_rs::from_str(&content)?;
     Ok(jmdict)
 }
 
+
 #[cfg(test)]
 mod tests {
-    use std::env;
     use super::*;
 
+    fn clear_string(s: &str) -> String {
+        s.replace(" ", "").replace("\n", "").replace("\t", "")
+    }
+
+    const ENTRY1_CONTENT: &'static str = r#"
+    Entry {
+        ent_seq: "1260110",
+        k_ele: [
+            KEle {
+                keb: "見本市",
+                ke_inf: [],
+                ke_pri: [
+                    "news1",
+                    "nf17",
+                ],
+            },
+        ],
+        r_ele: [
+            REle {
+                reb: "みほんいち",
+                re_nokanji: "",
+                re_restr: [],
+                re_inf: [],
+                re_pri: [
+                    "news1",
+                    "nf17",
+                ],
+            },
+        ],
+        sense: [
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [
+                    "noun (common) (futsuumeishi)",
+                ],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [
+                    LSource {
+                        lsource: "test",
+                        lang: "rus",
+                        ls_type: "",
+                        ls_wasei: '\0',
+                    },
+                ],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "trade fair",
+                        lang: "",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "handelsbeurs",
+                        lang: "dut",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                    Gloss {
+                        gloss: "vakbeurs",
+                        lang: "dut",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                    Gloss {
+                        gloss: "{gew.} foor",
+                        lang: "dut",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "Messe",
+                        lang: "ger",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                    Gloss {
+                        gloss: "Mustermesse",
+                        lang: "ger",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "termékbemutató",
+                        lang: "hun",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "торговля [на ярмарке] по образцам; выставка образцов (дляпродажи); выставка-продажа (товаров, изделий)",
+                        lang: "rus",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "feria de muestras",
+                        lang: "spa",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "fackmässa",
+                        lang: "swe",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+        ],
+    }"#;
+
+    const ENTRY2_CONTENT: &str = r#"
+    Entry {
+        ent_seq: "1053260",
+        k_ele: [],
+        r_ele: [
+            REle {
+                reb: "コンビナートキャンペーン",
+                re_nokanji: "",
+                re_restr: [],
+                re_inf: [],
+                re_pri: [],
+            },
+            REle {
+                reb: "コンビナート・キャンペーン",
+                re_nokanji: "",
+                re_restr: [],
+                re_inf: [],
+                re_pri: [],
+            },
+        ],
+        sense: [
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [
+                    "noun (common) (futsuumeishi)",
+                ],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [
+                    "obsolete term",
+                ],
+                s_inf: [],
+                lsource: [
+                    LSource {
+                        lsource: "kombinat",
+                        lang: "rus",
+                        ls_type: "",
+                        ls_wasei: '\0',
+                    },
+                    LSource {
+                        lsource: "campaign",
+                        lang: "eng",
+                        ls_type: "part",
+                        ls_wasei: 'y',
+                    },
+                ],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "coordinated advertising campaign for various different products (sharing brand name, slogans, etc.)",
+                        lang: "",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "industrieübergreifende Werbekampagne",
+                        lang: "ger",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+        ],
+    }"#;
+
+    const ENTRY3_CONTENT: &str = r#"
+    Entry {
+        ent_seq: "1053261",
+        k_ele: [],
+        r_ele: [
+            REle {
+                reb: "コンビナートキャンペーン",
+                re_nokanji: "",
+                re_restr: [],
+                re_inf: [],
+                re_pri: [],
+            },
+            REle {
+                reb: "コンビナート・キャンペーン",
+                re_nokanji: "",
+                re_restr: [],
+                re_inf: [],
+                re_pri: [],
+            },
+        ],
+        sense: [
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [
+                    "noun (common) (futsuumeishi)",
+                ],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [
+                    "obsolete term",
+                ],
+                s_inf: [],
+                lsource: [
+                    LSource {
+                        lsource: "kombinat",
+                        lang: "rus",
+                        ls_type: "",
+                        ls_wasei: '\0',
+                    },
+                    LSource {
+                        lsource: "campaign",
+                        lang: "eng",
+                        ls_type: "part",
+                        ls_wasei: 'y',
+                    },
+                ],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "coordinated advertising campaign for various different products (sharing brand name, slogans, etc.)",
+                        lang: "",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+            Sense {
+                stagk: [],
+                stagr: [],
+                pos: [],
+                xref: [],
+                ant: [],
+                field: [],
+                misc: [],
+                s_inf: [],
+                lsource: [],
+                dial: [],
+                gloss: [
+                    Gloss {
+                        gloss: "industrieübergreifende Werbekampagne",
+                        lang: "ger",
+                        g_gend: "",
+                        g_type: "",
+                    },
+                ],
+            },
+        ],
+    }"#;
+
     #[test]
-    fn test_read_jmdict() {
-        let jmdict = read_jmdict("./tests/resources/jmdict.xml");
-        println!("{:?}", env::current_dir());
-        match jmdict {
-            Ok(jmdict) => {
-                // println!("{:?}", jmdict);
-                // let s = to_string(&jmdict.entry[0]);
-                let s = &jmdict.entries[0];
-                println!("{:#?}", s);
-            }
-            Err(e) => println!("Error: {:?}", e),
-        }
+    fn test_read_jmdict()  {
+        let r_jmdict = read_jmdict("./tests/resources/jmdict.xml");
+        assert!(r_jmdict.is_ok(),"Error reading jmdict.");
+        let jmdict = r_jmdict.unwrap();
+        assert!(jmdict.entries.len() == 3, "There should be 3 entries in jmdict.");
+        let entry1 = &jmdict.entries[0];
+        let entry2 = &jmdict.entries[1];
+        let entry3 = &jmdict.entries[2];
+
+        assert_eq!(clear_string(ENTRY1_CONTENT), clear_string(&format!("{:#?}", entry1)));
+        assert_eq!(clear_string(ENTRY2_CONTENT), clear_string(&format!("{:#?}", entry2)));
+        assert_eq!(clear_string(ENTRY3_CONTENT), clear_string(&format!("{:#?}", entry3)));
     }
 }
 
